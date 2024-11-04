@@ -1,0 +1,73 @@
+# Limpiar la gráfica anterior
+        self.figure.clear()
+
+        # Crear el eje para la nueva gráfica
+        ax = self.figure.add_subplot(111)
+
+        # Generar la gráfica G
+        F = 9.64853321233100184
+        x = np.linspace(-3, 3, 300)
+        # I1 = Bmo * Bn * F * BArea * 0.0001 * (Bco - Bcoxo)
+        # I2 = -Bmr * Bn * F * BArea * 0.0001 * (Bcr - Bcrxo)
+        # print("I1:", I1)
+        # print("I2:", I2)
+        I = Bcrxo * Bn * F * BArea * 0.0001 * Bmr
+        I_LC = Bcoxo * Bn * F * BArea * 0.0001 * Bmo + I
+        try:
+            E = (
+                BEo
+                - 0.0592 / Bn * np.log10(Bmo / Bmr)
+                - 0.0592 / Bn * np.log10((I_LC - I) / I)
+            )
+        except:
+            print("Ignorando división por cero")
+            return
+        print("I:", I)
+        print("I_LC:", I_LC)
+        print("E:", E)
+        print(
+            "- R * T / Bn / F * np.log(Bmo / Bmr:  ",
+            -R * T / Bn / F * np.log(Bmo / Bmr),
+        )
+        print(
+            "- R * T / Bn / F * np.log((I_LC - I) / I",
+            -R * T / Bn / F * np.log((I_LC - I) / I),
+        )
+        curvaB = (0 - I_LC) / (1 + np.e ** (Bn * 3 * (x - E))) + 0
+        recta_ilcx = np.array([np.min(x), np.max(x)])
+        recta_ilcy = np.array([0, 0])
+        recta_ilax = np.array([np.min(x), np.max(x)])
+        recta_ilay = np.array([-I_LC, -I_LC])
+        Vx = np.array([E, E])
+        Vy = np.array([np.min(curvaB), np.max(curvaB)])
+        ax.plot(
+            Vx,
+            Vy,
+            linestyle="--",
+            linewidth=2,
+            color="#F72226",
+            label=f"E°' = {E:.2e} V",
+        )
+        ax.plot(
+            recta_ilax,
+            recta_ilay,
+            linestyle="--",
+            linewidth=2,
+            color="#6364FC",
+            label=f"I_LC = {-I_LC:.2e} A",
+        )
+        ax.plot(
+            recta_ilcx,
+            recta_ilcy,
+            linestyle="--",
+            linewidth=2,
+            color="#861491",
+            label=f"0 A",
+        )
+        ax.set_xticks(np.linspace(-3, 3, 13))  # 20 divisions on the x-axis
+        ax.plot(x, curvaB, linewidth=3, color="#101030")
+        ax.grid(True)
+        ax.legend()
+        ax.set_title(f"Corriente contra Potencial (Caso con $C_R^*=0$)")
+        ax.set_xlabel("E (V)")
+        ax.set_ylabel("I (A)")

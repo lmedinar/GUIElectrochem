@@ -18,7 +18,7 @@ class MyWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("GrÃ¡fica de A y B con PestaÃ±as")
+        self.setWindowTitle("Gráfica de A y B")
         self.setGeometry(100, 100, 800, 400)
 
         # Widget principal
@@ -37,13 +37,13 @@ class MyWindow(QMainWindow):
 
         # Crear la pestaÃ±a para los parÃ¡metros A
         self.tab_A = QWidget()
-        self.tabs.addTab(self.tab_A, "ParÃ¡metros A")
+        self.tabs.addTab(self.tab_A, "Parámetros A")
 
         # Crear la pestaÃ±a para los parÃ¡metros B
         self.tab_B = QWidget()
-        self.tabs.addTab(self.tab_B, "ParÃ¡metros B")
+        self.tabs.addTab(self.tab_B, "Parámetros B")
 
-        # Layout de la pestaÃ±a A
+        # Layout de la pestaña A
         layout_A = QVBoxLayout()
         self.label_A = QLabel("Valor A:")
         self.input_A = QLineEdit(self)
@@ -64,7 +64,7 @@ class MyWindow(QMainWindow):
         layout_A.addWidget(self.input_A3)
         self.tab_A.setLayout(layout_A)
 
-        # Layout de la pestaÃ±a B
+        # Layout de la pestaña B
         layout_B = QVBoxLayout()
         self.label_B = QLabel("Valor B:")
         self.input_B = QLineEdit(self)
@@ -84,7 +84,7 @@ class MyWindow(QMainWindow):
         # AÃ±adir el TabWidget al layout principal
         main_layout.addWidget(self.tabs)
 
-        # Widget para la grÃ¡fica en el lado derecho
+        # Widget para la gráfica en el lado derecho
         self.graph_widget = QWidget(self)
         self.graph_layout = QVBoxLayout(self.graph_widget)
         self.figure = Figure()
@@ -92,11 +92,11 @@ class MyWindow(QMainWindow):
         self.graph_layout.addWidget(self.canvas)
         main_layout.addWidget(self.graph_widget)
 
-        # Establecer un tamaÃ±o mÃ­nimo para la grÃ¡fica
+        # Establecer un tamaÃ±o máximo para la gráfica
         self.graph_widget.setMinimumWidth(480)
         self.graph_widget.setMinimumHeight(400)
 
-        # Conectar las seÃ±ales de cambio en los campos de texto y pestaÃ±as
+        # Conectar las señales de cambio en los campos de texto y pestaÃ±as
         self.tabs.currentChanged.connect(self.check_inputs)  # Cuando cambia la pestaÃ±a
         self.input_A.textChanged.connect(self.check_inputs)
         self.input_A1.textChanged.connect(self.check_inputs)
