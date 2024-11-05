@@ -39,7 +39,7 @@ class MyWindow(QMainWindow):
 
         # Establecer el ancho y alto mínimo del QTabWidget
         self.tabs.setMinimumWidth(550)
-        self.tabs.setMinimumHeight(600)
+        self.tabs.setMinimumHeight(750)
 
         # Crear un QDoubleValidator para validar valores flotantes
         float_validator = QDoubleValidator()
@@ -322,6 +322,86 @@ class MyWindow(QMainWindow):
 
         self.tab_D.setLayout(layout_D)
 
+        # Layout de la pestaña E
+        layout_E = QVBoxLayout()
+        self.label_DescE = QLabel(
+            "Descripción:\n\nHay un agente acomplejante (Y) que afecta a la especie O (reacciones reversibles).\n"
+        )
+        self.label_En = QLabel("Electrones(n):")
+        self.input_En = QLineEdit(self)
+        self.input_En.setValidator(int_validator)
+        self.input_En.setText("1")
+        self.label_EArea = QLabel("Área (cm²):")
+        self.input_EArea = QLineEdit(self)
+        self.input_EArea.setValidator(float_validator)
+        self.input_EArea.setText("1.0")
+        self.label_Emo = QLabel("Coef. de transferencia de masa 0:")
+        self.input_Emo = QLineEdit(self)
+        self.input_Emo.setValidator(float_validator)
+        self.input_Emo.setText("0.5")
+        self.label_Emr = QLabel("Coef. de transferencia de masa R:")
+        self.input_Emr = QLineEdit(self)
+        self.input_Emr.setValidator(float_validator)
+        self.input_Emr.setText("0.3")
+        self.label_Eco = QLabel("Concentración O* (no aplica):")
+        self.input_Eco = QLineEdit(self)
+        self.input_Eco.setValidator(float_validator)
+        self.input_Eco.setText("1.0")
+        self.label_Ecr = QLabel("Concentración R* (no aplica):")
+        self.input_Ecr = QLineEdit(self)
+        self.input_Ecr.setValidator(float_validator)
+        self.input_Ecr.setText("0")
+        self.input_Ecr.setDisabled(True)
+        self.label_EEo = QLabel("E°':")
+        self.input_EEo = QLineEdit(self)
+        self.input_EEo.setValidator(float_validator)
+        self.input_EEo.setText("0.5")
+        self.label_Ema = QLabel("Coef. de transferencia de masa A:")
+        self.input_Ema = QLineEdit(self)
+        self.input_Ema.setValidator(float_validator)
+        self.input_Ema.setText("0.5")
+        self.label_Eca = QLabel("Concentración de A*:")
+        self.input_Eca = QLineEdit(self)
+        self.input_Eca.setValidator(float_validator)
+        self.input_Eca.setText("4.0")
+        self.label_Ecy = QLabel("Concentración de Y*:")
+        self.input_Ecy = QLineEdit(self)
+        self.input_Ecy.setValidator(float_validator)
+        self.input_Ecy.setText("0.7")
+        self.label_Eq = QLabel("Coeficiente estequiométrico q para Y*:")
+        self.input_Eq = QLineEdit(self)
+        self.input_Eq.setValidator(int_validator)
+        self.input_Eq.setText("1")
+
+        layout_E.addWidget(self.label_DescE)
+        layout_E.addWidget(self.label_En)
+        layout_E.addWidget(self.input_En)
+        layout_E.addWidget(self.label_EArea)
+        layout_E.addWidget(self.input_EArea)
+        layout_E.addWidget(self.label_Emo)
+        layout_E.addWidget(self.input_Emo)
+        layout_E.addWidget(self.label_Emr)
+        layout_E.addWidget(self.input_Emr)
+        layout_E.addWidget(self.label_Eco)
+        layout_E.addWidget(self.input_Eco)
+        layout_E.addWidget(self.label_Ecr)
+        layout_E.addWidget(self.input_Ecr)
+        layout_E.addWidget(self.label_EEo)
+        layout_E.addWidget(self.input_EEo)
+        layout_E.addWidget(self.label_Ema)
+        layout_E.addWidget(self.input_Ema)
+        layout_E.addWidget(self.label_Eca)
+        layout_E.addWidget(self.input_Eca)
+        layout_E.addWidget(self.label_Ecy)
+        layout_E.addWidget(self.input_Ecy)
+        layout_E.addWidget(self.label_Eq)
+        layout_E.addWidget(self.input_Eq)
+
+        spacerE = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        layout_E.addItem(spacerE)
+
+        self.tab_E.setLayout(layout_E)
+
         # Crear el widget para la gráfica
         self.graph_widget = QWidget(self)
         self.graph_layout = QVBoxLayout(self.graph_widget)
@@ -383,6 +463,18 @@ class MyWindow(QMainWindow):
         self.input_Dco.textChanged.connect(self.check_inputs)
         self.input_Dcr.textChanged.connect(self.check_inputs)
         self.input_DEo.textChanged.connect(self.check_inputs)
+
+        self.input_En.textChanged.connect(self.check_inputs)
+        self.input_EArea.textChanged.connect(self.check_inputs)
+        self.input_Emo.textChanged.connect(self.check_inputs)
+        self.input_Emr.textChanged.connect(self.check_inputs)
+        self.input_Eco.textChanged.connect(self.check_inputs)
+        self.input_Ecr.textChanged.connect(self.check_inputs)
+        self.input_EEo.textChanged.connect(self.check_inputs)
+        self.input_Ema.textChanged.connect(self.check_inputs)
+        self.input_Eca.textChanged.connect(self.check_inputs)
+        self.input_Ecy.textChanged.connect(self.check_inputs)
+        self.input_Eq.textChanged.connect(self.check_inputs)
 
     def check_inputs(self):
         # Verificar la pestaña activa
@@ -452,6 +544,26 @@ class MyWindow(QMainWindow):
                 DEo = float(self.input_DEo.text())
                 print("Variables D correctas")
                 self.plot_graph_D(Dn, DArea, Dmo, Dmr, Dco, Dcr, DEo)
+            except ValueError:
+                print("Error de valor")
+                return
+
+        # Si la pestaña activa es la tercera, generar gráfica
+        elif current_tab == 4:
+            try:
+                En = float(self.input_En.text())
+                EArea = float(self.input_EArea.text())
+                Emo = float(self.input_Emo.text())
+                Emr = float(self.input_Emr.text())
+                Eco = float(self.input_Eco.text())
+                Ecr = float(self.input_Ecr.text())
+                EEo = float(self.input_EEo.text())
+                Ema = float(self.input_Ema.text())
+                Eca = float(self.input_Eca.text())
+                Ecy = float(self.input_Ecy.text())
+                Eq = float(self.input_Eq.text())
+                print("Variables E correctas")
+                self.plot_graph_E(En, EArea, Emo, Emr, Eco, Ecr, EEo, Ema, Eca, Ecy, Eq)
             except ValueError:
                 print("Error de valor")
                 return
@@ -665,7 +777,7 @@ class MyWindow(QMainWindow):
             # I = I_LC - I_LC / (Dco * exponencial)
             E = E_eq - R * T * np.log(I_LC / (I_LC - I)) / Dn / F
             # sobrepotencial = R * T * np.log((I_LC - I) / I_LC) / Dn / F
-            print(E)
+            # print(E)
         except:
             print("Ignorando división por cero")
             return
@@ -723,6 +835,75 @@ class MyWindow(QMainWindow):
         ax.set_ylabel("I (mA)")
 
         # Dibujar gŕafica
+        self.canvas.draw()
+
+    def plot_graph_E(self, En, EArea, Emo, Emr, Eco, Ecr, EEo, Ema, Eca, Ecy, Eq):
+        # Limpiar la gráfica anterior
+        self.figure.clear()
+
+        # Crear el eje para la nueva gráfica
+        ax = self.figure.add_subplot(111)
+
+        E = np.linspace(-2, 2, 300)
+        I_LC = Ema * En * F * EArea * 0.0001 * Eca
+        try:
+            k = Eco * Ecy**Eq / Eca
+            E_central = (
+                EEo
+                + R * T * np.log(k) / En / F
+                + R * T * np.log(Emr / Ema) / En / F
+                - R * T * Eq * np.log(Ecy) / En / F
+            )
+            exponencial = (
+                (Eca / Eco) * (Ema / Emr) * np.exp((En * F) * (E - EEo) / (R * T))
+            )
+            I = I_LC / (1 + exponencial)
+        except:
+            print("Ignorando división por cero")
+            return
+        # print("I:", I)
+        print("I_LC:", I_LC)
+        print("E_central:", E_central)
+
+        recta_ilcx = np.array([np.min(E), np.max(E)])
+        recta_ilcy = np.array([0, 0])
+        recta_ilax = np.array([np.min(E), np.max(E)])
+        recta_ilay = np.array([I_LC, I_LC])
+        Vx = np.array([E_central, E_central])
+        Vy = np.array([np.min(I), np.max(I)])
+        ax.plot(
+            Vx,
+            Vy,
+            linestyle="--",
+            linewidth=2,
+            color="#F72226",
+            label=f"$E_½$ = {E_central:.6f} V",
+        )
+        ax.plot(
+            recta_ilax,
+            recta_ilay,
+            linestyle="--",
+            linewidth=2,
+            color="#6364FC",
+            label="$I_{LC}$" + f" = {I_LC:.6f} mA",
+        )
+        ax.plot(
+            recta_ilcx,
+            recta_ilcy,
+            linestyle="--",
+            linewidth=2,
+            color="#861491",
+            label=f"0 A",
+        )
+        ax.set_xticks(np.linspace(-2, 2, 11))  # divisions on the x-axis
+        ax.plot(E, I, linewidth=3, color="#101030")
+        ax.grid(True)
+        ax.legend()
+        ax.set_title(f"Corriente contra Potencial")
+        ax.set_xlabel("E (V)")
+        ax.set_ylabel("I (mA)")
+
+        # Dibujar la nueva gráfica
         self.canvas.draw()
 
 
