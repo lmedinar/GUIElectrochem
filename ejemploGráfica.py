@@ -31,7 +31,7 @@ class MyWindow(QMainWindow):
         # Crear QTabWidget para las pestaÃ±as
         self.tabs = QTabWidget()
 
-        # Establecer el ancho y alto mÃ­nimo del QTabWidget
+        # Establecer el ancho y alto mínimo del QTabWidget
         self.tabs.setMinimumWidth(250)
         self.tabs.setMinimumHeight(150)
 
