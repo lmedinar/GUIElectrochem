@@ -27,7 +27,7 @@ class MyWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Gráfica de A y B con Pestañas")
+        self.setWindowTitle("Gráficadora de reacciones electroquímicas")
         self.setGeometry(100, 100, 800, 400)
 
         # Widget principal
