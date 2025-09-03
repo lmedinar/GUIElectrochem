@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import (
     QTabWidget,
     QSplitter,
 )
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QSettings
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from PyQt5.QtGui import QDoubleValidator, QIntValidator
@@ -26,6 +26,10 @@ T = 298
 class MyWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+
+        # Preferencia persistente de idioma
+        self.settings = QSettings("Lmedinar", "ElectrochemGrapher")
+        self.lang = self.settings.value("lang", "es")  # 'es' por defecto
 
         self.setWindowTitle("Gráficadora de reacciones electroquímicas")
         self.setGeometry(100, 100, 800, 400)
@@ -575,6 +579,132 @@ class MyWindow(QMainWindow):
         self.input_Fq.textChanged.connect(self.check_inputs)
         self.input_Fu.textChanged.connect(self.check_inputs)
 
+        # Menú de idioma
+        self._build_language_menu()
+
+        # Aplicar el idioma guardado a textos estáticos
+        self.apply_language(self.lang)
+
+    def _build_language_menu(self):
+        menubar = self.menuBar()
+        menu = menubar.addMenu("Idioma / Language")
+
+        # Acciones exclusivas
+        from PyQt5.QtWidgets import QAction, QActionGroup
+
+        group = QActionGroup(self)
+        group.setExclusive(True)
+
+        act_es = QAction("Español", self, checkable=True)
+        act_en = QAction("English", self, checkable=True)
+        group.addAction(act_es)
+        group.addAction(act_en)
+        menu.addAction(act_es)
+        menu.addAction(act_en)
+
+        # Check inicial según preferencia
+        if (self.lang or "es") == "es":
+            act_es.setChecked(True)
+        else:
+            act_en.setChecked(True)
+
+        # Conectar cambios
+        act_es.triggered.connect(lambda: self.on_change_language("es"))
+        act_en.triggered.connect(lambda: self.on_change_language("en"))
+
+    def on_change_language(self, lang: str):
+        if lang not in ("es", "en"):
+            return
+        self.lang = lang
+        self.settings.setValue("lang", lang)  # Persistir
+        self.apply_language(lang)
+
+    def _translation_tables(self):
+        # Mapeo literal ES -> EN para etiquetas/títulos estáticos
+        ES_TO_EN = {
+            "Gráficadora de reacciones electroquímicas": "Electrochemical Reaction Grapher",
+            # Títulos de pestañas
+            "Caso A": "Case A",
+            "Caso B": "Case B",
+            "Caso C": "Case C",
+            "Caso D": "Case D",
+            "Caso E": "Case E",
+            "Caso F": "Case F",
+            # Descripciones
+            "Descripción:\n\nR está ausente, pero O está presente.\n": "Description:\n\nR is absent, O is present.\n",
+            "Descripción:\n\nO y R están presentes desde el inicio.\n": "Description:\n\nBoth O and R are present initially.\n",
+            "Descripción:\n\nR está presente, pero está O ausente.\n": "Description:\n\nR is present, but O is absent.\n",
+            "Descripción:\n\nR es insoluble.\n": "Description:\n\nR is insoluble.\n",
+            "Descripción:\n\nHay un agente acomplejante (Y) que afecta a la especie O (reacciones reversibles).\n": "Description:\n\nA complexing agent (Y) affects species O (reversible reactions).\n",
+            "Descripción:\n\n El agente Y facilita la reacción (reacciones irreversibles).\n": "Description:\n\nAgent Y facilitates the reaction (irreversible reactions).\n",
+            # Campos comunes
+            "Electrones(n):": "Electrons (n):",
+            "Área (cm²):": "Area (cm²):",
+            "Coef. de transferencia de masa 0:": "Mass transfer coeff. O:",
+            "Coef. de transferencia de masa R:": "Mass transfer coeff. R:",
+            "Concentración O*:": "Concentration O*:",
+            "Concentración R* (No aplica):": "Concentration R* (N/A):",
+            "Concentración R*:": "Concentration R*:",
+            "Concentración O* (no aplica):": "Concentration O* (N/A):",
+            "Concentración R* (no aplica):": "Concentration R* (N/A):",
+            "E°':": "E°':",
+            # Caso E/F adicionales
+            "Coef. de transferencia de masa A:": "Mass transfer coeff. A:",
+            "Concentración de A*:": "Concentration A*:",
+            "Concentración de Y*:": "Concentration Y*:",
+            "Coeficiente estequiométrico q para Y*:": "Stoichiometric coefficient q for Y*:",
+            "Espesor de capa de reacción (µm):": "Reaction layer thickness (µm):",
+            # Ejes y títulos de gráfica (estáticos)
+            "Corriente contra Potencial": "Current vs Potential",
+            "E (V)": "E (V)",
+            "I (mA)": "I (mA)",
+            # Leyendas comunes (texto exacto sin valores numéricos)
+            "0 A": "0 A",
+        }
+
+        # Construye EN->ES automáticamente
+        EN_TO_ES = {v: k for k, v in ES_TO_EN.items()}
+        return ES_TO_EN, EN_TO_ES
+
+    def apply_language(self, lang: str):
+        ES_TO_EN, EN_TO_ES = self._translation_tables()
+
+        # 1) Título de la ventana
+        if lang == "en":
+            title = ES_TO_EN.get(self.windowTitle(), None)
+            if title:
+                self.setWindowTitle(title)
+        else:
+            title = EN_TO_ES.get(self.windowTitle(), None)
+            if title:
+                self.setWindowTitle(title)
+
+        # 2) Títulos de pestañas (índices 0..5)
+        tab_titles_es = ["Caso A", "Caso B", "Caso C", "Caso D", "Caso E", "Caso F"]
+        for idx, es_title in enumerate(tab_titles_es):
+            current = self.tabs.tabText(idx)
+            if lang == "en":
+                new = ES_TO_EN.get(current, ES_TO_EN.get(es_title, current))
+            else:
+                # Si ya está en inglés o no coincide, intenta revertir
+                new = EN_TO_ES.get(
+                    current, EN_TO_ES.get(ES_TO_EN.get(es_title, ""), current)
+                )
+            self.tabs.setTabText(idx, new)
+
+        # 3) Todos los QLabel del formulario (traducción literal si hay clave)
+        for lbl in self.findChildren(QLabel):
+            txt = lbl.text()
+            if lang == "en":
+                if txt in ES_TO_EN:
+                    lbl.setText(ES_TO_EN[txt])
+            else:
+                if txt in EN_TO_ES:
+                    lbl.setText(EN_TO_ES[txt])
+
+        # NOTA: Títulos/leyendas generados dentro de plot_* pueden seguir en ES.
+        # Abajo dejo un TODO para internacionalizar también las gráficas.
+
     def check_inputs(self):
         # Verificar la pestaña activa
         current_tab = self.tabs.currentIndex()
@@ -744,9 +874,9 @@ class MyWindow(QMainWindow):
         ax.plot(E, I, linewidth=3, color="#101030")
         ax.grid(True)
         ax.legend()
-        ax.set_title(f"Corriente contra Potencial")
-        ax.set_xlabel("E (V)")
-        ax.set_ylabel("I (mA)")
+        ax.set_title(self._("Corriente contra Potencial"))
+        ax.set_xlabel(self._("E (V)"))
+        ax.set_ylabel(self._("I (mA)"))
 
         # Dibujar la nueva gráfica
         self.canvas.draw()
@@ -817,9 +947,9 @@ class MyWindow(QMainWindow):
         ax.plot(E, I, linewidth=3, color="#101030")
         ax.grid(True)
         ax.legend()
-        ax.set_title(f"Corriente contra Potencial")
-        ax.set_xlabel("E (V)")
-        ax.set_ylabel("I (mA)")
+        ax.set_title(self._("Corriente contra Potencial"))
+        ax.set_xlabel(self._("E (V)"))
+        ax.set_ylabel(self._("I (mA)"))
 
         # Dibujar gŕafica
         self.canvas.draw()
@@ -875,9 +1005,9 @@ class MyWindow(QMainWindow):
         ax.plot(E, I, linewidth=3, color="#101030")
         ax.grid(True)
         ax.legend()
-        ax.set_title(f"Corriente contra Potencial")
-        ax.set_xlabel("E (V)")
-        ax.set_ylabel("I (mA)")
+        ax.set_title(self._("Corriente contra Potencial"))
+        ax.set_xlabel(self._("E (V)"))
+        ax.set_ylabel(self._("I (mA)"))
 
         print("completadooooooooooo")
         # Dibujar gŕafica
@@ -952,9 +1082,9 @@ class MyWindow(QMainWindow):
         ax.plot(E, I, linewidth=3, color="#101030")
         ax.grid(True)
         ax.legend()
-        ax.set_title(f"Corriente contra Potencial")
-        ax.set_xlabel("E (V)")
-        ax.set_ylabel("I (mA)")
+        ax.set_title(self._("Corriente contra Potencial"))
+        ax.set_xlabel(self._("E (V)"))
+        ax.set_ylabel(self._("I (mA)"))
 
         # Dibujar gŕafica
         self.canvas.draw()
@@ -1021,9 +1151,9 @@ class MyWindow(QMainWindow):
         ax.plot(E, I, linewidth=3, color="#101030")
         ax.grid(True)
         ax.legend()
-        ax.set_title(f"Corriente contra Potencial")
-        ax.set_xlabel("E (V)")
-        ax.set_ylabel("I (mA)")
+        ax.set_title(self._("Corriente contra Potencial"))
+        ax.set_xlabel(self._("E (V)"))
+        ax.set_ylabel(self._("I (mA)"))
 
         # Dibujar la nueva gráfica
         self.canvas.draw()
@@ -1085,12 +1215,18 @@ class MyWindow(QMainWindow):
         ax.plot(E, I, linewidth=3, color="#101030")
         ax.grid(True)
         ax.legend()
-        ax.set_title(f"Corriente contra Potencial")
-        ax.set_xlabel("E (V)")
-        ax.set_ylabel("I (mA)")
+        ax.set_title(self._("Corriente contra Potencial"))
+        ax.set_xlabel(self._("E (V)"))
+        ax.set_ylabel(self._("I (mA)"))
 
         # Dibujar la nueva gráfica
         self.canvas.draw()
+
+    def _(self, s: str) -> str:
+        ES_TO_EN, EN_TO_ES = self._translation_tables()
+        if self.lang == "en":
+            return ES_TO_EN.get(s, s)
+        return EN_TO_ES.get(s, s) if s in EN_TO_ES else s
 
 
 if __name__ == "__main__":
