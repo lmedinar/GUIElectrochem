@@ -4,6 +4,10 @@
 
 > ⚡ This project was created as an educational tool to visualize different **electrochemical response cases**, helping students bridge theory and experimental intuition.
 
+### Portable Windows executable
+
+Download the `.exe` file from the [Releases](https://github.com/lmedinar/GUIElectrochem/releases) section.
+
 ---
 
 ## ✨ Key Features
@@ -50,11 +54,6 @@
 ```bash
 python GUIElectrochem.py
   ```
-
-### Portable Windows executable
-
-Download the `.exe` file from the [Releases](https://github.com/lmedinar/GUIElectrochem/releases) section.
-
 ---
 
 ## 📚 References
