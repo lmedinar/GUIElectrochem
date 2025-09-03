@@ -42,9 +42,9 @@
 
 ### From source
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/username/ElectrochemGrapher.git
-   cd ElectrochemGrapher
+```bash
+   git clone https://github.com/username/GUIElectrochem.git
+   cd GUIElectrochem
 ```
 2. Run the application:
 ```bash
@@ -53,7 +53,7 @@ python GUIElectrochem.py
 
 ### Portable Windows executable
 
-Download the `.exe` file from the [Releases](https://github.com/username/ElectrochemGrapher/releases) section.
+Download the `.exe` file from the [Releases](https://github.com/username/GUIElectrochem/releases) section.
 
 ---
 
