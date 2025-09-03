@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import Qt, QSettings
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
-from PyQt5.QtGui import QDoubleValidator, QIntValidator
+from PyQt5.QtGui import QDoubleValidator, QIntValidator, QIcon
 from PyQt5.QtWidgets import QSpacerItem, QSizePolicy
 from matplotlib.figure import Figure
 import numpy as np
@@ -26,6 +26,8 @@ T = 298
 class MyWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+
+        self.setWindowIcon(QIcon("bubbles.ico"))
 
         # Preferencia persistente de idioma
         self.settings = QSettings("Lmedinar", "ElectrochemGrapher")
