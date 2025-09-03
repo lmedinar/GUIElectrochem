@@ -43,7 +43,7 @@
 ### From source
 1. Clone the repository:
 ```bash
-   git clone https://github.com/username/GUIElectrochem.git
+   git clone https://github.com/lmedinar/GUIElectrochem.git
    cd GUIElectrochem
 ```
 2. Run the application:
@@ -53,7 +53,7 @@ python GUIElectrochem.py
 
 ### Portable Windows executable
 
-Download the `.exe` file from the [Releases](https://github.com/username/GUIElectrochem/releases) section.
+Download the `.exe` file from the [Releases](https://github.com/lmedinar/GUIElectrochem/releases) section.
 
 ---
 
